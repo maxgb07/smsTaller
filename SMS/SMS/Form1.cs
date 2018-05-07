@@ -15,6 +15,9 @@ using System.Windows.Forms;
 using GsmComm.GsmCommunication;
 using GsmComm.PduConverter;
 using System.Configuration;
+using Utils.Correo;
+using Utils.Log;
+
 namespace SMS
 {
     public partial class Form1 : Form
@@ -24,7 +27,6 @@ namespace SMS
         public Form1()
         {
             InitializeComponent();
-            CrearLog();
             if (CrearConexionCOM())
             {
                 labelEstado.Text = "BAM Conectada";
@@ -55,23 +57,12 @@ namespace SMS
                 string error = "Ocurrio un error al ejecutar la funcion EnviarMensajeCliente, Con los siguientes datos: Telefono :" + numeroCelular
                 + " Mensaje: " //+ MensajeGSM
                 + " Error: " + ex + ", señal del dispositivo: " + comm.GetSignalQuality().SignalStrength;
-                eventLog1.WriteEntry(error, EventLogEntryType.Error);
+                new Log().Error(error);
                 NotificacionCorreo notificacionCorreo = new NotificacionCorreo();
                 Thread thread = new Thread(x => notificacionCorreo.EnviarThread("Ocurrio un error al ejecutar la funcion EnviarMensajeCliente() <br></br>Error: " + error));
                 thread.Start();
                 ReiniciarConexionCOM();
             }
-        }
-        public void CrearLog()
-        {
-            if (!System.Diagnostics.EventLog.SourceExists("LogServicioMensajes"))
-            {
-                System.Diagnostics.EventLog.CreateEventSource(
-                    "LogServicioMensajes", "NewLogServicioMensajes");
-            }
-            eventLog1.Source = "LogServicioMensajes";
-            eventLog1.Log = "NewLogServicioMensajes";
-            eventLog1.WriteEntry("Inicio de Aplicacion de SMS");
         }
         public bool CrearConexionCOM()
         {
@@ -89,9 +80,9 @@ namespace SMS
                         string modelBAM = comm.IdentifyDevice().Model.ToUpper().ToString();
                         string numRevisionBAM = comm.IdentifyDevice().Revision.ToUpper().ToString();
                         string numSerieBAM = comm.IdentifyDevice().SerialNumber.ToUpper().ToString();
-                        eventLog1.WriteEntry("Conexion de BAM exitosa, señal del dispositivo: " + comm.GetSignalQuality().SignalStrength
+                        new Log().Info("Conexion de BAM exitosa, señal del dispositivo: " + comm.GetSignalQuality().SignalStrength
                             + "\n Datos BAM: \n *" + nombreBAM + "\n *" + modelBAM + "\n *" + numRevisionBAM + "\n *" + numSerieBAM
-                            , EventLogEntryType.Information);
+                            );
                         return true;
                     }
                     else
@@ -107,7 +98,7 @@ namespace SMS
                         NotificacionCorreo notificacionCorreo = new NotificacionCorreo();
                         Thread thread = new Thread(x=>notificacionCorreo.EnviarThread("Verifique que la banda ancha (bam) este conectada al equipo..!!<br></br>Se recomienda cerrar la aplicacion e intentar de nuevo <br></br>Error: " + ex));
                         thread.Start();
-                        eventLog1.WriteEntry(ex.Message, EventLogEntryType.Error);
+                        new Log().Error(ex.Message);
                         return false;
                     }
                     puertoCOM++;
@@ -121,7 +112,7 @@ namespace SMS
         {
             try
             {
-                eventLog1.WriteEntry("Reiniciando conexion de BAM...", EventLogEntryType.Information);
+                new Log().Info("Reiniciando conexion de BAM...");
                 comm.Close();
                 LiberarPuertoCOM();
                 Thread.Sleep(10000);
@@ -129,7 +120,7 @@ namespace SMS
             }
             catch (Exception e)
             {
-                eventLog1.WriteEntry("Ocurrio un error al ejecutar la funcion ReiniciarConexionCOM() <br></br>Error: " + e, EventLogEntryType.Error);
+                new Log().Error("Ocurrio un error al ejecutar la funcion ReiniciarConexionCOM() <br></br>Error: " + e);
             }
         }
         public void LiberarPuertoCOM()
@@ -209,7 +200,7 @@ namespace SMS
             }
             catch (Exception e)
             {
-                eventLog1.WriteEntry("Ocurrio un error al ejecutar la funcion QuitarAcentos()" + e, EventLogEntryType.Error);
+                new Log().Error("Ocurrio un error al ejecutar la funcion QuitarAcentos()" + e);
             }
             return mensaje;
         }

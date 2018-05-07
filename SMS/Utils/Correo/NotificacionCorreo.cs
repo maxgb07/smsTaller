@@ -8,10 +8,11 @@ using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SMS
+namespace Utils.Correo
 {
     public class NotificacionCorreo
     {
+
         string asunto = string.Empty;
         string cuerpo = string.Empty;
         string emisor = string.Empty;
@@ -49,7 +50,7 @@ namespace SMS
             }
             catch (Exception ex)
             {
-                //eventLog1.WriteEntry(ex.Message, EventLogEntryType.Error); 
+                new Utils.Log.Log().Error(ex.Message);
             }
         }
     }

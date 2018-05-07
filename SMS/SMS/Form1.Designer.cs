@@ -28,18 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.eventLog1 = new System.Diagnostics.EventLog();
             this.label1 = new System.Windows.Forms.Label();
             this.tbNumeroCelular = new System.Windows.Forms.TextBox();
             this.btnEnviarMensaje = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.labelEstado = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.eventLog1)).BeginInit();
             this.SuspendLayout();
-            // 
-            // eventLog1
-            // 
-            this.eventLog1.SynchronizingObject = this;
             // 
             // label1
             // 
@@ -99,15 +93,12 @@
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "SMS";
-            ((System.ComponentModel.ISupportInitialize)(this.eventLog1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Diagnostics.EventLog eventLog1;
         private System.Windows.Forms.Button btnEnviarMensaje;
         private System.Windows.Forms.TextBox tbNumeroCelular;
         private System.Windows.Forms.Label label1;
