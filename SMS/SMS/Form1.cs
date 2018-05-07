@@ -21,13 +21,6 @@ namespace SMS
     {
         private int puertoCOM = 1;
         private GsmCommMain comm;
-        string asunto = string.Empty;
-        string cuerpo = string.Empty;
-        string emisor = string.Empty;
-        string destinatario = string.Empty;
-        string servidor = string.Empty;
-        string contrasena = string.Empty;
-        int puerto;
         public Form1()
         {
             InitializeComponent();
@@ -63,7 +56,9 @@ namespace SMS
                 + " Mensaje: " //+ MensajeGSM
                 + " Error: " + ex + ", señal del dispositivo: " + comm.GetSignalQuality().SignalStrength;
                 eventLog1.WriteEntry(error, EventLogEntryType.Error);
-                NotificacionCorreo("Ocurrio un error al ejecutar la funcion EnviarMensajeCliente() <br></br>Error: " + error);
+                NotificacionCorreo notificacionCorreo = new NotificacionCorreo();
+                Thread thread = new Thread(x => notificacionCorreo.EnviarThread("Ocurrio un error al ejecutar la funcion EnviarMensajeCliente() <br></br>Error: " + error));
+                thread.Start();
                 ReiniciarConexionCOM();
             }
         }
@@ -109,7 +104,9 @@ namespace SMS
                 {
                     if (puertoCOM >= 50)//recorre hasta el puerto 50
                     {
-                        NotificacionCorreo("Verifique que la banda ancha (bam) este conectada al equipo..!!<br></br>Se recomienda cerrar la aplicacion e intentar de nuevo <br></br>Error: " + ex);
+                        NotificacionCorreo notificacionCorreo = new NotificacionCorreo();
+                        Thread thread = new Thread(x=>notificacionCorreo.EnviarThread("Verifique que la banda ancha (bam) este conectada al equipo..!!<br></br>Se recomienda cerrar la aplicacion e intentar de nuevo <br></br>Error: " + ex));
+                        thread.Start();
                         eventLog1.WriteEntry(ex.Message, EventLogEntryType.Error);
                         return false;
                     }
@@ -215,36 +212,6 @@ namespace SMS
                 eventLog1.WriteEntry("Ocurrio un error al ejecutar la funcion QuitarAcentos()" + e, EventLogEntryType.Error);
             }
             return mensaje;
-        }
-        public void NotificacionCorreo (String notificacion)
-        {
-            asunto = ConfigurationManager.AppSettings["asunto"];
-            cuerpo = ConfigurationManager.AppSettings["cuerpo"];
-            emisor = ConfigurationManager.AppSettings["emisor"];
-            contrasena = ConfigurationManager.AppSettings["contrasena"];
-            destinatario = ConfigurationManager.AppSettings["destinatario"];
-            servidor = ConfigurationManager.AppSettings["servidor"];
-            puerto = Convert.ToInt32(ConfigurationManager.AppSettings["puerto"]);
-            try
-            {
-                MailMessage mail = new MailMessage();
-                mail.From = new MailAddress(emisor);
-                mail.IsBodyHtml = true;
-                mail.Subject = asunto;
-                mail.Body += cuerpo + "<br></br>" + notificacion;
-                mail.To.Add(new MailAddress(destinatario));
-                //mail.Bcc.Add(correoCopia);
-                SmtpClient client = new SmtpClient();
-                client.Credentials = new NetworkCredential(emisor,contrasena);
-                client.EnableSsl = true;
-                client.Port = puerto;
-                client.DeliveryMethod = SmtpDeliveryMethod.Network;
-                client.Host = servidor;
-                AlternateView htmlView = AlternateView.CreateAlternateViewFromString(mail.Body.ToString(), Encoding.UTF8, MediaTypeNames.Text.Html);
-                mail.AlternateViews.Add(htmlView);
-                client.Send(mail);
-            }
-            catch (Exception ex) { eventLog1.WriteEntry(ex.Message, EventLogEntryType.Error); }
         }
     }
 }
