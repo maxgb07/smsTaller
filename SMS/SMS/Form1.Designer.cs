@@ -33,6 +33,8 @@
             this.btnEnviarMensaje = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.labelEstado = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.labelSenalBAM = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -65,7 +67,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(2, 311);
+            this.label2.Location = new System.Drawing.Point(0, 308);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(46, 13);
             this.label2.TabIndex = 3;
@@ -74,10 +76,27 @@
             // labelEstado
             // 
             this.labelEstado.AutoSize = true;
-            this.labelEstado.Location = new System.Drawing.Point(48, 311);
+            this.labelEstado.Location = new System.Drawing.Point(46, 311);
             this.labelEstado.Name = "labelEstado";
             this.labelEstado.Size = new System.Drawing.Size(0, 13);
             this.labelEstado.TabIndex = 4;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(181, 308);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(37, 13);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "Señal:";
+            // 
+            // labelSenalBAM
+            // 
+            this.labelSenalBAM.AutoSize = true;
+            this.labelSenalBAM.Location = new System.Drawing.Point(215, 308);
+            this.labelSenalBAM.Name = "labelSenalBAM";
+            this.labelSenalBAM.Size = new System.Drawing.Size(0, 13);
+            this.labelSenalBAM.TabIndex = 6;
             // 
             // Form1
             // 
@@ -85,6 +104,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(307, 333);
+            this.Controls.Add(this.labelSenalBAM);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.labelEstado);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.btnEnviarMensaje);
@@ -104,6 +125,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label labelEstado;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label labelSenalBAM;
     }
 }
 

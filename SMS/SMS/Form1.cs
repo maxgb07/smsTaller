@@ -30,10 +30,12 @@ namespace SMS
             if (CrearConexionCOM())
             {
                 labelEstado.Text = "BAM Conectada";
+                labelSenalBAM.Text = Convert.ToString(comm.GetSignalQuality().SignalStrength);
             }
             else
             {
                 labelEstado.Text = "BAM Desconectada";
+                labelSenalBAM.Text = "No Disponible";
                 btnEnviarMensaje.Enabled = false;
                 tbNumeroCelular.Enabled = false;
             }
