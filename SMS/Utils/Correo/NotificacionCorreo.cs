@@ -7,6 +7,7 @@ using System.Net.Mail;
 using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
+using Utils.CreacionLog;
 
 namespace Utils.Correo
 {
@@ -50,7 +51,7 @@ namespace Utils.Correo
             }
             catch (Exception ex)
             {
-                new Utils.Log.Log().Error(ex.Message);
+                new LogAplicacion().Error(ex.Message);
             }
         }
     }

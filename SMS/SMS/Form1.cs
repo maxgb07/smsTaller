@@ -16,7 +16,7 @@ using GsmComm.GsmCommunication;
 using GsmComm.PduConverter;
 using System.Configuration;
 using Utils.Correo;
-using Utils.Log;
+using Utils.CreacionLog;
 
 namespace SMS
 {
@@ -59,7 +59,7 @@ namespace SMS
                 string error = "Ocurrio un error al ejecutar la funcion EnviarMensajeCliente, Con los siguientes datos: Telefono :" + numeroCelular
                 + " Mensaje: " //+ MensajeGSM
                 + " Error: " + ex + ", señal del dispositivo: " + comm.GetSignalQuality().SignalStrength;
-                new Log().Error(error);
+                new LogAplicacion().Error(error);
                 NotificacionCorreo notificacionCorreo = new NotificacionCorreo();
                 Thread thread = new Thread(x => notificacionCorreo.EnviarThread("Ocurrio un error al ejecutar la funcion EnviarMensajeCliente() <br></br>Error: " + error));
                 thread.Start();
@@ -82,7 +82,7 @@ namespace SMS
                         string modelBAM = comm.IdentifyDevice().Model.ToUpper().ToString();
                         string numRevisionBAM = comm.IdentifyDevice().Revision.ToUpper().ToString();
                         string numSerieBAM = comm.IdentifyDevice().SerialNumber.ToUpper().ToString();
-                        new Log().Info("Conexion de BAM exitosa, señal del dispositivo: " + comm.GetSignalQuality().SignalStrength
+                        new LogAplicacion().Info("Conexion de BAM exitosa, señal del dispositivo: " + comm.GetSignalQuality().SignalStrength
                             + "\n Datos BAM: \n *" + nombreBAM + "\n *" + modelBAM + "\n *" + numRevisionBAM + "\n *" + numSerieBAM
                             );
                         return true;
@@ -100,7 +100,7 @@ namespace SMS
                         NotificacionCorreo notificacionCorreo = new NotificacionCorreo();
                         Thread thread = new Thread(x=>notificacionCorreo.EnviarThread("Verifique que la banda ancha (bam) este conectada al equipo..!!<br></br>Se recomienda cerrar la aplicacion e intentar de nuevo <br></br>Error: " + ex));
                         thread.Start();
-                        new Log().Error(ex.Message);
+                        new LogAplicacion().Error(ex.Message);
                         return false;
                     }
                     puertoCOM++;
@@ -114,7 +114,7 @@ namespace SMS
         {
             try
             {
-                new Log().Info("Reiniciando conexion de BAM...");
+                new LogAplicacion().Info("Reiniciando conexion de BAM...");
                 comm.Close();
                 LiberarPuertoCOM();
                 Thread.Sleep(10000);
@@ -122,7 +122,7 @@ namespace SMS
             }
             catch (Exception e)
             {
-                new Log().Error("Ocurrio un error al ejecutar la funcion ReiniciarConexionCOM() <br></br>Error: " + e);
+                new LogAplicacion().Error("Ocurrio un error al ejecutar la funcion ReiniciarConexionCOM() <br></br>Error: " + e);
             }
         }
         public void LiberarPuertoCOM()
@@ -202,7 +202,7 @@ namespace SMS
             }
             catch (Exception e)
             {
-                new Log().Error("Ocurrio un error al ejecutar la funcion QuitarAcentos()" + e);
+                new LogAplicacion().Error("Ocurrio un error al ejecutar la funcion QuitarAcentos()" + e);
             }
             return mensaje;
         }

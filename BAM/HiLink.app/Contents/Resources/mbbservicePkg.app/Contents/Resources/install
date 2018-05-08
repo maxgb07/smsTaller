@@ -1,0 +1,28 @@
+#!/bin/bash
+killall -c mbbservice
+#rm -rf /Library/StartupItems/MobileBrServ
+rm -rf /Library/StartupItems/MobileBrServ/MobileBrServ
+rm -rf /Library/StartupItems/MobileBrServ/SysConfig.dat
+rm -rf /Library/StartupItems/MobileBrServ/StartupParameters.plist
+rm -rf /Library/StartupItems/MobileBrServ/mbbservice
+rm -rf /Library/StartupItems/MobileBrServ/mbbserviceUninstall.app
+rm -rf /Library/StartupItems/MobileBrServ/runmbbserviceopen
+rm -rf /Library/StartupItems/MobileBrServ/mbbserviceopen.app
+rm -rf /Library/LaunchAgents/com.huawei.mbbservice.plist
+rm -rf /tmp/mbbservice.pid
+rm -rf /usr/local/FlashcardService/mbbservice.log
+
+chmod a+w /usr
+mkdir /usr/local
+
+chmod 0440 /private/etc/sudoers
+
+#echo $1 > /log.txt
+#cp -Rf "${1}" /Library/StartupItems/MobileBrServ
+installer -pkg "${1}" -target /
+cp -Rf "${1}/../mbbserviceopen.app" "/Library/StartupItems/MobileBrServ/mbbserviceopen.app"
+chown -R root:wheel /Library/StartupItems/MobileBrServ
+chmod -R 755 /Library/StartupItems/MobileBrServ
+chmod -R a+wrx /Library/StartupItems/MobileBrServ/mbbserviceopen.app
+#open -a /Library/StartupItems/MobileBrServ/MobileBrServ &
+

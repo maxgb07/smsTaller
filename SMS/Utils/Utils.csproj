@@ -42,7 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Correo\NotificacionCorreo.cs" />
-    <Compile Include="Log\Log.cs" />
+    <Compile Include="CreacionLog\LogAplicacion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
