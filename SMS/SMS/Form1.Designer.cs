@@ -35,6 +35,8 @@
             this.labelEstado = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.labelSenalBAM = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.tbTotalRepacacion = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // label1
@@ -98,12 +100,30 @@
             this.labelSenalBAM.Size = new System.Drawing.Size(0, 13);
             this.labelSenalBAM.TabIndex = 6;
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(18, 116);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(95, 13);
+            this.label4.TabIndex = 7;
+            this.label4.Text = "Precio Reparacion";
+            // 
+            // tbTotalRepacacion
+            // 
+            this.tbTotalRepacacion.Location = new System.Drawing.Point(131, 108);
+            this.tbTotalRepacacion.Name = "tbTotalRepacacion";
+            this.tbTotalRepacacion.Size = new System.Drawing.Size(143, 20);
+            this.tbTotalRepacacion.TabIndex = 8;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(307, 333);
+            this.Controls.Add(this.tbTotalRepacacion);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.labelSenalBAM);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.labelEstado);
@@ -127,6 +147,8 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label labelSenalBAM;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox tbTotalRepacacion;
     }
 }
 

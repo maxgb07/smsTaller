@@ -44,6 +44,8 @@ namespace SMS
         public void EnviarMensajeCliente(string numeroCelular)
         {
             String mensaje = ConfigurationManager.AppSettings["MensajeGSM"];
+            string precio = this.tbTotalRepacacion.Text;
+            mensaje += precio;
             try
             {
                
@@ -142,7 +144,7 @@ namespace SMS
         private void btnEnviarMensaje_Click(object sender, EventArgs e)
         {
             string numero = this.tbNumeroCelular.Text;
-
+            
             if (IsNumeric(numero))
             {
                 if (numero.Length < 10 || numero.Length > 10)
@@ -151,8 +153,8 @@ namespace SMS
                 }
                 else
                 {
-                    //EnviarMensajeCliente(numero);
-                    MessageBox.Show("Ya casi");
+                    EnviarMensajeCliente(numero);
+                    //MessageBox.Show("Ya casi");
                 }
             }
             else
