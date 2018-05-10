@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.label1 = new System.Windows.Forms.Label();
             this.tbNumeroCelular = new System.Windows.Forms.TextBox();
             this.btnEnviarMensaje = new System.Windows.Forms.Button();
@@ -115,6 +116,7 @@
             this.tbTotalRepacacion.Name = "tbTotalRepacacion";
             this.tbTotalRepacacion.Size = new System.Drawing.Size(143, 20);
             this.tbTotalRepacacion.TabIndex = 8;
+            this.tbTotalRepacacion.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbTotalRepacacion_KeyPress);
             // 
             // Form1
             // 
@@ -131,6 +133,7 @@
             this.Controls.Add(this.btnEnviarMensaje);
             this.Controls.Add(this.tbNumeroCelular);
             this.Controls.Add(this.label1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "SMS";

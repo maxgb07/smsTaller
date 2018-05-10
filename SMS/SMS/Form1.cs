@@ -17,6 +17,7 @@ using GsmComm.PduConverter;
 using System.Configuration;
 using Utils.Correo;
 using Utils.CreacionLog;
+using System.IO;
 
 namespace SMS
 {
@@ -27,45 +28,53 @@ namespace SMS
         public Form1()
         {
             InitializeComponent();
-            if (CrearConexionCOM())
-            {
-                labelEstado.Text = "BAM Conectada";
-                labelSenalBAM.Text = Convert.ToString(comm.GetSignalQuality().SignalStrength);
-            }
-            else
-            {
-                labelEstado.Text = "BAM Desconectada";
-                labelSenalBAM.Text = "No Disponible";
-                btnEnviarMensaje.Enabled = false;
-                tbNumeroCelular.Enabled = false;
-            }
+            //if (CrearConexionCOM())
+            //{
+            //    labelEstado.Text = "BAM Conectada";
+            //    labelSenalBAM.Text = Convert.ToString(comm.GetSignalQuality().SignalStrength);
+            //}
+            //else
+            //{
+            //    labelEstado.Text = "BAM Desconectada";
+            //    labelSenalBAM.Text = "No Disponible";
+            //    btnEnviarMensaje.Enabled = false;
+            //    tbNumeroCelular.Enabled = false;
+            //}
 
         }
         public void EnviarMensajeCliente(string numeroCelular)
         {
             String mensaje = ConfigurationManager.AppSettings["MensajeGSM"];
-            string precio = this.tbTotalRepacacion.Text;
-            mensaje += precio;
+            decimal precio = Convert.ToDecimal(this.tbTotalRepacacion.Text);
+            mensaje += precio.ToString("N")+" "+"pesos.";
             try
             {
                
                 mensaje = QuitarAcentos(mensaje);
-                SmsSubmitPdu pdu;
-                byte dcs = (byte)DataCodingScheme.GeneralCoding.Alpha7BitDefault;
-                pdu = new SmsSubmitPdu(mensaje,numeroCelular, dcs);
-                comm.SendMessage(pdu, false);
-
+                var lines = File.ReadAllLines(@"D:\Escritorio\sensms.bash");//Ruta donde se guardara el archivo bash
+                lines[3] = "NUMBER=\""+numeroCelular+"\"";//Se modifica la linea para agregar el celular ingresado
+                lines[4] = "MESSAGE=\"" +mensaje+"\"";//Se modifica la linea para agregar el mensaje por default 
+                File.WriteAllLines(@"D:\Escritorio\sensms.bash", lines);
+                ProcessStartInfo p = new ProcessStartInfo(@"C:\Program Files\Git\git-bash.exe");
+                p.WindowStyle = ProcessWindowStyle.Hidden;
+                Process.Start(p);
+                //Process.Start(@"C:\Program Files\Git\git-bash.exe");//Ruta del archivo a ejecutar
+                //SmsSubmitPdu pdu;
+                //byte dcs = (byte)DataCodingScheme.GeneralCoding.Alpha7BitDefault;
+                //pdu = new SmsSubmitPdu(mensaje,numeroCelular, dcs);
+                //comm.SendMessage(pdu, false);
             }
             catch (Exception ex)
             {
                 string error = "Ocurrio un error al ejecutar la funcion EnviarMensajeCliente, Con los siguientes datos: Telefono :" + numeroCelular
-                + " Mensaje: " //+ MensajeGSM
-                + " Error: " + ex + ", señal del dispositivo: " + comm.GetSignalQuality().SignalStrength;
+                + " Mensaje: " + mensaje
+                + " Error: " + ex;
+                // + ", señal del dispositivo: " + comm.GetSignalQuality().SignalStrength;
                 new LogAplicacion().Error(error);
                 NotificacionCorreo notificacionCorreo = new NotificacionCorreo();
                 Thread thread = new Thread(x => notificacionCorreo.EnviarThread("Ocurrio un error al ejecutar la funcion EnviarMensajeCliente() <br></br>Error: " + error));
                 thread.Start();
-                ReiniciarConexionCOM();
+                //ReiniciarConexionCOM();
             }
         }
         public bool CrearConexionCOM()
@@ -144,7 +153,7 @@ namespace SMS
         private void btnEnviarMensaje_Click(object sender, EventArgs e)
         {
             string numero = this.tbNumeroCelular.Text;
-            
+            string precio = this.tbTotalRepacacion.Text;
             if (IsNumeric(numero))
             {
                 if (numero.Length < 10 || numero.Length > 10)
@@ -154,7 +163,6 @@ namespace SMS
                 else
                 {
                     EnviarMensajeCliente(numero);
-                    //MessageBox.Show("Ya casi");
                 }
             }
             else
@@ -207,6 +215,40 @@ namespace SMS
                 new LogAplicacion().Error("Ocurrio un error al ejecutar la funcion QuitarAcentos()" + e);
             }
             return mensaje;
+        }
+
+        private void tbTotalRepacacion_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == 8)
+            {
+                e.Handled = false;
+                return;
+            }
+
+
+            bool IsDec = false;
+            int nroDec = 0;
+
+            for (int i = 0; i < tbTotalRepacacion.Text.Length; i++)
+            {
+                if (tbTotalRepacacion.Text[i] == '.')
+                    IsDec = true;
+
+                if (IsDec && nroDec++ >= 2)
+                {
+                    e.Handled = true;
+                    return;
+                }
+
+
+            }
+
+            if (e.KeyChar >= 48 && e.KeyChar <= 57)
+                e.Handled = false;
+            else if (e.KeyChar == 46)
+                e.Handled = (IsDec) ? true : false;
+            else
+                e.Handled = true;
         }
     }
 }
