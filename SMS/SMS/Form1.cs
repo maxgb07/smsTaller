@@ -18,6 +18,7 @@ using System.Configuration;
 using Utils.Correo;
 using Utils.CreacionLog;
 using System.IO;
+using System.Net.NetworkInformation;
 
 namespace SMS
 {
@@ -28,36 +29,54 @@ namespace SMS
         public Form1()
         {
             InitializeComponent();
-            //if (CrearConexionCOM())
-            //{
-            //    labelEstado.Text = "BAM Conectada";
-            //    labelSenalBAM.Text = Convert.ToString(comm.GetSignalQuality().SignalStrength);
-            //}
-            //else
-            //{
-            //    labelEstado.Text = "BAM Desconectada";
-            //    labelSenalBAM.Text = "No Disponible";
-            //    btnEnviarMensaje.Enabled = false;
-            //    tbNumeroCelular.Enabled = false;
-            //}
-
+            labelEstado.Text = "BAM Conectada";
         }
         public void EnviarMensajeCliente(string numeroCelular)
         {
             String mensaje = ConfigurationManager.AppSettings["MensajeGSM"];
-            decimal precio = Convert.ToDecimal(this.tbTotalRepacacion.Text);
+            decimal precio = Convert.ToDecimal(this.tbTotalReparacion.Text);
             mensaje += precio.ToString("N")+" "+"pesos.";
             try
             {
-               
-                mensaje = QuitarAcentos(mensaje);
-                var lines = File.ReadAllLines(@"D:\Escritorio\sensms.bash");//Ruta donde se guardara el archivo bash
-                lines[3] = "NUMBER=\""+numeroCelular+"\"";//Se modifica la linea para agregar el celular ingresado
-                lines[4] = "MESSAGE=\"" +mensaje+"\"";//Se modifica la linea para agregar el mensaje por default 
-                File.WriteAllLines(@"D:\Escritorio\sensms.bash", lines);
-                ProcessStartInfo p = new ProcessStartInfo(@"C:\Program Files\Git\git-bash.exe");
-                p.WindowStyle = ProcessWindowStyle.Hidden;
-                Process.Start(p);
+                if (PingHost("192.168.20.142"))//192.168.8.1
+                {
+                    //mensaje = QuitarAcentos(mensaje);
+                    //var lines = File.ReadAllLines(@"D:\Escritorio\sensms.bash");//Ruta donde se guardara el archivo bash
+                    //lines[3] = "NUMBER=\"" + numeroCelular + "\"";//Se modifica la linea para agregar el celular ingresado
+                    //lines[4] = "MESSAGE=\"" + mensaje + "\"";//Se modifica la linea para agregar el mensaje por default 
+                    //File.WriteAllLines(@"D:\Escritorio\sensms.bash", lines);//Ruta donde se guarda el de nueva cuenta el archivo esta es igual a la linea de un poco mas arriba
+                    //ProcessStartInfo p = new ProcessStartInfo(@"D:\Escritorio\sensms.bash");//ruta para ejecutar el bash misma que la de arriba 
+                    //p.WindowStyle = ProcessWindowStyle.Hidden;
+                    //Process.Start(p);
+                    FileStream fs = new FileStream(@"D:\Escritorio\prueba.txt", FileMode.Open);//ruta de respuesta del request
+                    byte[] bytes = new byte[fs.Length];
+                    fs.Read(bytes, 0, bytes.Length);
+                    string s = Encoding.ASCII.GetString(bytes);
+                    bool b = s.Contains("OK");
+                    if (b)
+                    {
+                        MessageBox.Show("Mensaje Enviado");
+                        this.tbNumeroCelular.Text = "";
+                        this.tbTotalReparacion.Text = "";
+                    }
+                    else
+                    {
+                        string error = "Ocurrio un error al ejecutar la funcion EnviarMensajeCliente, Con los siguientes datos: Telefono :" + numeroCelular
+                        + " Mensaje: " + mensaje
+                        + " Error: " + s;
+                        new LogAplicacion().Error(error);
+                        NotificacionCorreo notificacionCorreo = new NotificacionCorreo();
+                        Thread thread = new Thread(x => notificacionCorreo.EnviarThread("Ocurrio un error al ejecutar la funcion EnviarMensajeCliente() <br></br>Error: " + error));
+                        thread.Start();
+                        MessageBox.Show("Mensaje no Enviado, Ocurrio un error");
+                        this.tbNumeroCelular.Text = "";
+                        this.tbTotalReparacion.Text = "";
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Favor de Conectar la BAM");
+                }
                 //Process.Start(@"C:\Program Files\Git\git-bash.exe");//Ruta del archivo a ejecutar
                 //SmsSubmitPdu pdu;
                 //byte dcs = (byte)DataCodingScheme.GeneralCoding.Alpha7BitDefault;
@@ -153,22 +172,37 @@ namespace SMS
         private void btnEnviarMensaje_Click(object sender, EventArgs e)
         {
             string numero = this.tbNumeroCelular.Text;
-            string precio = this.tbTotalRepacacion.Text;
-            if (IsNumeric(numero))
+            string precio = this.tbTotalReparacion.Text;
+            if (string.Compare(numero, "") != 0)
             {
-                if (numero.Length < 10 || numero.Length > 10)
+                if (IsNumeric(numero))
                 {
-                    MessageBox.Show("El número debe contener 10 dígitos");
+                    if (numero.Length < 10 || numero.Length > 10)
+                    {
+                        MessageBox.Show("El número debe contener 10 dígitos");
+                    }
+                    else
+                    {
+                        if (string.Compare(precio, "") == 0)
+                        {
+                            MessageBox.Show("Debe agregar el costo de la reparacion");
+                        }
+                        else
+                        {
+                            EnviarMensajeCliente(numero);
+                        }
+                    }
                 }
                 else
                 {
-                    EnviarMensajeCliente(numero);
+                    MessageBox.Show("Solo se permite el uso de números");
                 }
             }
             else
             {
-                MessageBox.Show("Solo se permite el uso de números");
+                MessageBox.Show("Debe de introducir un número de celular con 10 dígitos");
             }
+
         }
 
         private void tbNumeroCelular_KeyPress(object sender, KeyPressEventArgs e)
@@ -229,9 +263,9 @@ namespace SMS
             bool IsDec = false;
             int nroDec = 0;
 
-            for (int i = 0; i < tbTotalRepacacion.Text.Length; i++)
+            for (int i = 0; i < tbTotalReparacion.Text.Length; i++)
             {
-                if (tbTotalRepacacion.Text[i] == '.')
+                if (tbTotalReparacion.Text[i] == '.')
                     IsDec = true;
 
                 if (IsDec && nroDec++ >= 2)
@@ -249,6 +283,21 @@ namespace SMS
                 e.Handled = (IsDec) ? true : false;
             else
                 e.Handled = true;
+        }
+        public bool PingHost(string nameOrAddress)
+        {
+            bool pingable = false;
+            Ping pinger = new Ping();
+            try
+            {
+                PingReply reply = pinger.Send(nameOrAddress);
+                pingable = reply.Status == IPStatus.Success;
+            }
+            catch (PingException)
+            {
+                // Discard PingExceptions and return false;
+            }
+            return pingable;
         }
     }
 }

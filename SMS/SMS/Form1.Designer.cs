@@ -34,10 +34,8 @@
             this.btnEnviarMensaje = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.labelEstado = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.labelSenalBAM = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.tbTotalRepacacion = new System.Windows.Forms.TextBox();
+            this.tbTotalReparacion = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // label1
@@ -84,23 +82,6 @@
             this.labelEstado.Size = new System.Drawing.Size(0, 13);
             this.labelEstado.TabIndex = 4;
             // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(180, 311);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(37, 13);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Señal:";
-            // 
-            // labelSenalBAM
-            // 
-            this.labelSenalBAM.AutoSize = true;
-            this.labelSenalBAM.Location = new System.Drawing.Point(217, 311);
-            this.labelSenalBAM.Name = "labelSenalBAM";
-            this.labelSenalBAM.Size = new System.Drawing.Size(0, 13);
-            this.labelSenalBAM.TabIndex = 6;
-            // 
             // label4
             // 
             this.label4.AutoSize = true;
@@ -110,13 +91,13 @@
             this.label4.TabIndex = 7;
             this.label4.Text = "Precio Reparacion";
             // 
-            // tbTotalRepacacion
+            // tbTotalReparacion
             // 
-            this.tbTotalRepacacion.Location = new System.Drawing.Point(131, 108);
-            this.tbTotalRepacacion.Name = "tbTotalRepacacion";
-            this.tbTotalRepacacion.Size = new System.Drawing.Size(143, 20);
-            this.tbTotalRepacacion.TabIndex = 8;
-            this.tbTotalRepacacion.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbTotalRepacacion_KeyPress);
+            this.tbTotalReparacion.Location = new System.Drawing.Point(131, 108);
+            this.tbTotalReparacion.Name = "tbTotalReparacion";
+            this.tbTotalReparacion.Size = new System.Drawing.Size(143, 20);
+            this.tbTotalReparacion.TabIndex = 8;
+            this.tbTotalReparacion.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbTotalRepacacion_KeyPress);
             // 
             // Form1
             // 
@@ -124,10 +105,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(307, 333);
-            this.Controls.Add(this.tbTotalRepacacion);
+            this.Controls.Add(this.tbTotalReparacion);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.labelSenalBAM);
-            this.Controls.Add(this.label3);
             this.Controls.Add(this.labelEstado);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.btnEnviarMensaje);
@@ -148,10 +127,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label labelEstado;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label labelSenalBAM;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox tbTotalRepacacion;
+        private System.Windows.Forms.TextBox tbTotalReparacion;
     }
 }
 

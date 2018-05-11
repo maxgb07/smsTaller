@@ -16,7 +16,15 @@ namespace SMS
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            if (new Form1().PingHost("192.168.20.142"))//192.168.8.1
+            {
+                Application.Run(new Form1());
+            }
+            else
+            {
+                MessageBox.Show("Favor de Conectar la BAM y abrir de nuevo la aplicacion");
+                Application.Exit();
+            }
         }
     }
 }
