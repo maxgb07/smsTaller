@@ -16,7 +16,7 @@ namespace SMS
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            if (new Form1().PingHost("192.168.20.142"))//192.168.8.1
+            if (new Form1().PingHost("192.168.8.1"))//192.168.8.1
             {
                 Application.Run(new Form1());
             }

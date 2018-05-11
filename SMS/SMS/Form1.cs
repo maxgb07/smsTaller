@@ -38,16 +38,18 @@ namespace SMS
             mensaje += precio.ToString("N")+" "+"pesos.";
             try
             {
-                if (PingHost("192.168.20.142"))//192.168.8.1
+                if (PingHost("192.168.8.1"))//192.168.8.1 ip de BAM
                 {
-                    //mensaje = QuitarAcentos(mensaje);
-                    //var lines = File.ReadAllLines(@"D:\Escritorio\sensms.bash");//Ruta donde se guardara el archivo bash
-                    //lines[3] = "NUMBER=\"" + numeroCelular + "\"";//Se modifica la linea para agregar el celular ingresado
-                    //lines[4] = "MESSAGE=\"" + mensaje + "\"";//Se modifica la linea para agregar el mensaje por default 
-                    //File.WriteAllLines(@"D:\Escritorio\sensms.bash", lines);//Ruta donde se guarda el de nueva cuenta el archivo esta es igual a la linea de un poco mas arriba
-                    //ProcessStartInfo p = new ProcessStartInfo(@"D:\Escritorio\sensms.bash");//ruta para ejecutar el bash misma que la de arriba 
-                    //p.WindowStyle = ProcessWindowStyle.Hidden;
-                    //Process.Start(p);
+                    mensaje = QuitarAcentos(mensaje);
+                    var lines = File.ReadAllLines(@"D:\Escritorio\sensms.bash");//Ruta donde se guardara el archivo bash
+                    lines[3] = "NUMBER=\"" + numeroCelular + "\"";//Se modifica la linea para agregar el celular ingresado
+                    lines[4] = "MESSAGE=\"" + mensaje + "\"";//Se modifica la linea para agregar el mensaje por default 
+                    File.WriteAllLines(@"D:\Escritorio\sensms.bash", lines);//Ruta donde se guarda el de nueva cuenta el archivo esta es igual a la linea de un poco mas arriba
+                    ProcessStartInfo p = new ProcessStartInfo(@"D:\Escritorio\sensms.bash");//ruta para ejecutar el bash misma que la de arriba
+                    p.CreateNoWindow = false;
+                    p.WindowStyle = ProcessWindowStyle.Hidden;
+                    Process process = Process.Start(p);
+                    process.WaitForExit();
                     FileStream fs = new FileStream(@"D:\Escritorio\prueba.txt", FileMode.Open);//ruta de respuesta del request
                     byte[] bytes = new byte[fs.Length];
                     fs.Read(bytes, 0, bytes.Length);
@@ -61,16 +63,36 @@ namespace SMS
                     }
                     else
                     {
-                        string error = "Ocurrio un error al ejecutar la funcion EnviarMensajeCliente, Con los siguientes datos: Telefono :" + numeroCelular
-                        + " Mensaje: " + mensaje
-                        + " Error: " + s;
-                        new LogAplicacion().Error(error);
-                        NotificacionCorreo notificacionCorreo = new NotificacionCorreo();
-                        Thread thread = new Thread(x => notificacionCorreo.EnviarThread("Ocurrio un error al ejecutar la funcion EnviarMensajeCliente() <br></br>Error: " + error));
-                        thread.Start();
-                        MessageBox.Show("Mensaje no Enviado, Ocurrio un error");
-                        this.tbNumeroCelular.Text = "";
-                        this.tbTotalReparacion.Text = "";
+                        if (string.Compare(s, "\n") != 0)
+                        {
+                            string error = "Ocurrio un error al ejecutar la funcion EnviarMensajeCliente, Con los siguientes datos: Telefono :" + numeroCelular
+                            + " Mensaje: " + mensaje
+                            + " Error: " + s;
+                            new LogAplicacion().Error(error);
+                            NotificacionCorreo notificacionCorreo = new NotificacionCorreo();
+                            Thread thread = new Thread(x => notificacionCorreo.EnviarThread("Ocurrio un error al ejecutar la funcion EnviarMensajeCliente() <br></br>Error: " + error));
+                            thread.Start();
+                            MessageBox.Show("Mensaje no Enviado, Ocurrio un error");
+                            this.tbNumeroCelular.Text = "";
+                            this.tbTotalReparacion.Text = "";
+                        }
+                        else
+                        {
+                            s = "BAM No Conectada";
+                            this.labelEstado.Text = "BAM No Conectada";
+                            this.tbNumeroCelular.Text = "";
+                            this.tbTotalReparacion.Text = "";
+                            this.tbNumeroCelular.Enabled = false;
+                            this.tbTotalReparacion.Enabled = false;
+                            MessageBox.Show("BAM No Conectada. Cierre la aplicacion, conecta la BAM y ejecute la aplicacion.");
+                            string error = "Ocurrio un error al ejecutar la funcion EnviarMensajeCliente, Con los siguientes datos: Telefono :" + numeroCelular
+                            + " Mensaje: " + mensaje
+                            + " Error: " + s;
+                            new LogAplicacion().Error(error);
+                            NotificacionCorreo notificacionCorreo = new NotificacionCorreo();
+                            Thread thread = new Thread(x => notificacionCorreo.EnviarThread("Ocurrio un error al ejecutar la funcion EnviarMensajeCliente() <br></br>Error: " + error));
+                            thread.Start();
+                        }
                     }
                 }
                 else
