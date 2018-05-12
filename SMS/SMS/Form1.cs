@@ -33,6 +33,8 @@ namespace SMS
         }
         public void EnviarMensajeCliente(string numeroCelular)
         {
+            string rutaCurl = ConfigurationManager.AppSettings["rutaCurl"];
+            string respuestaCurl = ConfigurationManager.AppSettings["respuestaCurl"];
             String mensaje = ConfigurationManager.AppSettings["MensajeGSM"];
             decimal precio = Convert.ToDecimal(this.tbTotalReparacion.Text);
             mensaje += precio.ToString("N")+" "+"pesos.";
@@ -41,16 +43,16 @@ namespace SMS
                 if (PingHost("192.168.8.1"))//192.168.8.1 ip de BAM
                 {
                     mensaje = QuitarAcentos(mensaje);
-                    var lines = File.ReadAllLines(@"D:\Escritorio\sensms.bash");//Ruta donde se guardara el archivo bash
+                    var lines = File.ReadAllLines(rutaCurl);//Ruta donde se guardara el archivo bash
                     lines[3] = "NUMBER=\"" + numeroCelular + "\"";//Se modifica la linea para agregar el celular ingresado
                     lines[4] = "MESSAGE=\"" + mensaje + "\"";//Se modifica la linea para agregar el mensaje por default 
-                    File.WriteAllLines(@"D:\Escritorio\sensms.bash", lines);//Ruta donde se guarda el de nueva cuenta el archivo esta es igual a la linea de un poco mas arriba
-                    ProcessStartInfo p = new ProcessStartInfo(@"D:\Escritorio\sensms.bash");//ruta para ejecutar el bash misma que la de arriba
+                    File.WriteAllLines(rutaCurl, lines);//Ruta donde se guarda el de nueva cuenta el archivo esta es igual a la linea de un poco mas arriba
+                    ProcessStartInfo p = new ProcessStartInfo(rutaCurl);//ruta para ejecutar el bash misma que la de arriba
                     p.CreateNoWindow = false;
                     p.WindowStyle = ProcessWindowStyle.Hidden;
                     Process process = Process.Start(p);
                     process.WaitForExit();
-                    FileStream fs = new FileStream(@"D:\Escritorio\prueba.txt", FileMode.Open);//ruta de respuesta del request
+                    FileStream fs = new FileStream(respuestaCurl, FileMode.Open);//ruta de respuesta del request
                     byte[] bytes = new byte[fs.Length];
                     fs.Read(bytes, 0, bytes.Length);
                     string s = Encoding.ASCII.GetString(bytes);
@@ -60,6 +62,7 @@ namespace SMS
                         MessageBox.Show("Mensaje Enviado");
                         this.tbNumeroCelular.Text = "";
                         this.tbTotalReparacion.Text = "";
+                        fs.Close();
                     }
                     else
                     {
@@ -75,6 +78,7 @@ namespace SMS
                             MessageBox.Show("Mensaje no Enviado, Ocurrio un error");
                             this.tbNumeroCelular.Text = "";
                             this.tbTotalReparacion.Text = "";
+                            fs.Close();
                         }
                         else
                         {
@@ -92,8 +96,10 @@ namespace SMS
                             NotificacionCorreo notificacionCorreo = new NotificacionCorreo();
                             Thread thread = new Thread(x => notificacionCorreo.EnviarThread("Ocurrio un error al ejecutar la funcion EnviarMensajeCliente() <br></br>Error: " + error));
                             thread.Start();
+                            fs.Close();
                         }
                     }
+                    fs.Close();
                 }
                 else
                 {
