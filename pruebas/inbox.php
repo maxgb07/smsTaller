@@ -23,7 +23,7 @@ $NUMBER="4433425609";
 $MESSAGE="Hola desde php";
 $LENGTH=strlen($MESSAGE);
 $TIME=date("Y/m/d");
-$SMS="<request><PageIndex>1</PageIndex><ReadCount>3</ReadCount><BoxType>1</BoxType><SortType>0</SortType><Ascending>0</Ascending><UnreadPreferred>1</UnreadPreferred></request>";
+$SMS="<request><PageIndex>1</PageIndex><ReadCount>10</ReadCount><BoxType>1</BoxType><SortType>0</SortType><Ascending>0</Ascending><UnreadPreferred>1</UnreadPreferred></request>";
 
 curl_setopt($ch, CURLOPT_URL,"http://192.168.8.1/api/sms/sms-list");
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -33,7 +33,7 @@ curl_setopt($ch, CURLOPT_POST, 1);
 $headers = array();
 $headers[]="Cookie: ".$xml->SesInfo;
 $headers[] = "X-Requested-With: XMLHttpRequest";
-$headers[] = "__requestverificationtoken:1".$TOKEN;
+$headers[] = "__requestverificationtoken:".$TOKEN;
 $headers[] = "Content-Type: text/xml";
 
 print_r ($headers);
@@ -47,5 +47,12 @@ if (curl_errno($ch)) {
 curl_close ($ch);
 
 echo "<br/> RESULTADO: ".$result;
+$xml = simplexml_load_string($result);
+print_r($xml);
+echo '<br/>';
+ 
+echo '<br/>$resultado:'.$xml->Messages[0]->Message[0]->Content;
+echo '<br/>$resultado:'.$xml->Messages[0]->Message[1]->Content;
+echo '<br/>$resultado:'.$xml->Messages[0]->Message[2]->Content;
 
 ?>

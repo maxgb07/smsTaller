@@ -33,7 +33,7 @@ curl_setopt($ch, CURLOPT_POST, 1);
 $headers = array();
 $headers[]="Cookie: ".$xml->SesInfo;
 $headers[] = "X-Requested-With: XMLHttpRequest";
-$headers[] = "__requestverificationtoken:1".$TOKEN;
+$headers[] = "__requestverificationtoken:".$TOKEN;
 $headers[] = "Content-Type: text/xml";
 
 print_r ($headers);
